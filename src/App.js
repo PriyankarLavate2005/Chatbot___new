@@ -1,60 +1,57 @@
-import React, { useState } from "react";
-import axios from "axios";
-
-import "./HealthcareChat.css"; // Import CSS file for styling
+import React, { useState } from 'react';
+import { FaRobot, FaTimes } from 'react-icons/fa';
+import HealthcareChat from './HealthcareChat';
+import './App.css';
 
 const App = () => {
-  const [query, setQuery] = useState("");
-  const [response, setResponse] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const API_KEY = ""; // Replace with your Gemini API Key
-  const URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${API_KEY}`;
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!query) return;
-    
-    setLoading(true);
-    setResponse("");
-
-    try {
-      const res = await axios.post(URL, {
-        contents: [{ parts: [{ text: query }] }],
-      });
-
-      const answer = res.data.candidates[0].content.parts[0].text;
-      setResponse(answer);
-    } catch (error) {
-      console.error("API Error:", error);
-      setResponse("⚠️ Sorry, something went wrong. Please try again!");
-    }
-
-    setLoading(false);
-  };
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
-    <div className="container">
-      <h2>Healthcare AI Assistant 🏥</h2>
+    <div className="app-container">
+      <header className="app-header">
+        <h1>Healthcare AI Portal</h1>
+        <p>Your intelligent health assistant</p>
+      </header>
 
-      <form onSubmit={handleSubmit}>
-        <textarea
-          placeholder="Ask any healthcare-related question..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        ></textarea>
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Fetching..." : "Ask AI"}
-        </button>
-      </form>
-
-      {response && (
-        <div className="response-box">
-          <strong>AI Response:</strong>
-          <p>{response}</p>
+      <main className="app-main">
+        <div className="app-content">
+          <h2>Welcome to Healthcare AI</h2>
+          <p>Get instant answers to your medical questions from our AI assistant.</p>
+          <div className="features">
+            <div className="feature-card">
+              <h3>24/7 Assistance</h3>
+              <p>Always available when you need medical information</p>
+            </div>
+            <div className="feature-card">
+              <h3>Trusted Sources</h3>
+              <p>Answers based on verified medical knowledge</p>
+            </div>
+            <div className="feature-card">
+              <h3>Quick Responses</h3>
+              <p>Get instant answers to your health queries</p>
+            </div>
+          </div>
         </div>
-      )}
+
+        {/* Floating AI Assistant Button */}
+        <div 
+          className={`ai-assistant-button ${isChatOpen ? 'active' : ''}`}
+          onClick={() => setIsChatOpen(!isChatOpen)}
+        >
+          {isChatOpen ? <FaTimes size={24} /> : <FaRobot size={24} />}
+        </div>
+
+        {/* Chat Modal */}
+        {isChatOpen && (
+          <div className="chat-modal">
+            <HealthcareChat />
+          </div>
+        )}
+      </main>
+
+      <footer className="app-footer">
+        <p>© {new Date().getFullYear()} Healthcare AI. For informational purposes only.</p>
+      </footer>
     </div>
   );
 };
